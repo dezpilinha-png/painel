@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TopCine Brasil - Sua TV Online Premium</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ESTILOS ESPECÍFICOS PARA O MODAL ATUALIZADO */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1f35 0%, #0d1120 100%);
+            margin: 5% auto;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            border: 1px solid #2d3748;
+            overflow: hidden;
+            animation: modalSlideIn 0.4s ease-out;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%);
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: none;
+        }
+
+        .modal-header h2 {
+            color: white;
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: rotate(90deg);
+        }
+
+        /* Input Groups Melhorados */
+        .input-group {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ff6b00;
+            z-index: 1;
+            font-size: 1.1rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 18px 20px 18px 50px;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid #2d3748;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #ff6b00;
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 0 0 3px rgba(255,107,0,0.3);
+            transform: translateY(-2px);
+        }
+
+        .input-group input::placeholder {
+            color: #a0aec0;
+        }
+
+        /* Login Button Melhorado */
+        .login-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(255,107,0,0.4);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255,107,0,0.6);
+            background: linear-gradient(135deg, #ff8c00 0%, #ff6b00 100%);
+        }
+
+        /* Info Box */
+        .info-box {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding: 1.2rem;
+            background: rgba(255,107,0,0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255,107,0,0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .info-box p {
+            color: #ffa94d;
+            font-size: 0.9rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Botões de Ação no Resultado */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-close {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid #4a5568;
+        }
+
+        .btn-close:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-new-search {
+            background: linear-gradient(135deg, #ff6b00 0%, #ff8c00 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255,107,0,0.4);
+        }
+
+        .btn-new-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255,107,0,0.6);
+        }
+
+        .btn-copy {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(66,153,225,0.4);
+        }
+
+        .btn-copy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66,153,225,0.6);
+        }
+
+        /* Animações */
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-60px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 10% auto;
+                width: 95%;
+            }
+            
+            .modal-header {
+                padding: 1.2rem 1.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-btn {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <i class="fas fa-play-circle"></i>
+                <span>TopCine Brasil</span>
+            </div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active">Início</a>
+                <a href="#canais" class="nav-link">Canais</a>
+                <a href="#filmes" class="nav-link">Filmes</a>
+                <a href="#series" class="nav-link">Séries</a>
+                <a href="#planos" class="nav-link">Planos</a>
+            </div>
+            <div class="nav-actions">
+                <button class="btn-login" onclick="openLogin()">
+                    <i class="fas fa-user"></i>
+                    Área do Cliente
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                TV Online <span class="highlight">Premium</span> 
+                <br>Para Toda a Família
+            </h1>
+            <p class="hero-subtitle">
+                +5.000 Canais • +10.000 Filmes • +3.000 Séries
+                <br>Qualidade Full HD • Suporte 24/7
+            </p>
+            <div class="hero-actions">
+                <button class="btn-primary" onclick="openLogin()">
+                    <i class="fas fa-rocket"></i>
+                    Acessar Minha Conta
+                </button>
+                <button class="btn-secondary" onclick="scrollToSection('planos')">
+                    <i class="fas fa-crown"></i>
+                    Ver Planos
+                </button>
+            </div>
+            <div class="hero-features">
+                <div class="feature">
+                    <i class="fas fa-tv"></i>
+                    <span>Canais Ao Vivo</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-film"></i>
+                    <span>Filmes Lançamentos</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-star"></i>
+                    <span>Séries Exclusivas</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-mobile-alt"></i>
+                    <span>Multiplataforma</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="tv-mockup">
+                <div class="tv-screen">
+                    <div class="channel-display">
+                        <div class="channel-logo">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div class="channel-info">
+                            <span class="channel-name">TopCine Brasil</span>
+                            <span class="program-name">Ao Vivo - Sistema Integrado</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Canais Section -->
+    <section id="canais" class="section">
+        <div class="container">
+            <h2 class="section-title">Canais <span class="highlight">Populares</span></h2>
+            <div class="channels-grid">
+                <!-- Canais serão inseridos via JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Planos Section -->
+    <section id="planos" class="section plans-section">
+        <div class="container">
+            <h2 class="section-title">Escolha Seu <span class="highlight">Plano</span></h2>
+            <div class="plans-grid">
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <h3>Básico</h3>
+                        <div class="plan-price">
+                            <span class="currency">R$</span>
+                            <span class="amount">19,90</span>
+                            <span class="period">/mês</span>
+                        </div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> 1.000 Canais</li>
+                        <li><i class="fas fa-check"></i> Qualidade HD</li>
+                        <li><i class="fas fa-check"></i> 1 Tela</li>
+                        <li><i class="fas fa-times"></i> Filmes Legendados</li>
+                        <li><i class="fas fa-times"></i> Séries Exclusivas</li>
+                    </ul>
+                    <button class="btn-plan" onclick="selectPlan('Básico')">
+                        Assinar Agora
+                    </button>
+                </div>
+
+                <div class="plan-card featured">
+                    <div class="plan-badge">Popular</div>
+                    <div class="plan-header">
+                        <h3>Premium</h3>
+                        <div class="plan-price">
+                            <span class="currency">R$</span>
+                            <span class="amount">29,90</span>
+                            <span class="period">/mês</span>
+                        </div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> 3.000 Canais</li>
+                        <li><i class="fas fa-check"></i> Qualidade Full HD</li>
+                        <li><i class="fas fa-check"></i> 3 Telas</li>
+                        <li><i class="fas fa-check"></i> Filmes Legendados</li>
+                        <li><i class="fas fa-check"></i> Séries Exclusivas</li>
+                    </ul>
+                    <button class="btn-plan primary" onclick="selectPlan('Premium')">
+                        Assinar Agora
+                    </button>
+                </div>
+
+                <div class="plan-card">
+                    <div class="plan-header">
+                        <h3>Família</h3>
+                        <div class="plan-price">
+                            <span class="currency">R$</span>
+                            <span class="amount">49,90</span>
+                            <span class="period">/mês</span>
+                        </div>
+                    </div>
+                    <ul class="plan-features">
+                        <li><i class="fas fa-check"></i> 5.000 Canais</li>
+                        <li><i class="fas fa-check"></i> Qualidade 4K</li>
+                        <li><i class="fas fa-check"></i> 5 Telas</li>
+                        <li><i class="fas fa-check"></i> Todos os Filmes</li>
+                        <li><i class="fas fa-check"></i> Todas as Séries</li>
+                    </ul>
+                    <button class="btn-plan" onclick="selectPlan('Família')">
+                        Assinar Agora
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Login Modal ATUALIZADO - DESIGN MODERNO -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-shield"></i> Área do Cliente</h2>
+                <button class="close-btn" onclick="closeLogin()">&times;</button>
+            </div>
+            <form class="login-form" style="padding: 2rem;">
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" placeholder="Digite seu email cadastrado" required>
+                </div>
+                <button type="submit" class="login-btn">
+                    <i class="fas fa-search"></i>
+                    Consultar Minha Conta
+                </button>
+                
+                <div class="info-box">
+                    <p>
+                        <i class="fas fa-info-circle"></i>
+                        Digite o email utilizado no cadastro
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="logo">
+                        <i class="fas fa-play-circle"></i>
+                        <span>TopCine Brasil</span>
+                    </div>
+                    <p>Sua plataforma de streaming premium com sistema integrado ao Google Sheets.</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Conteúdo</h4>
+                    <ul>
+                        <li><a href="#canais">Canais TV</a></li>
+                        <li><a href="#filmes">Filmes</a></li>
+                        <li><a href="#series">Séries</a></li>
+                        <li><a href="#esportes">Esportes</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Suporte</h4>
+                    <ul>
+                        <li><a href="#">Central de Ajuda</a></li>
+                        <li><a href="#">Tutoriais</a></li>
+                        <li><a href="#">Status do Serviço</a></li>
+                        <li><a href="#">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Termos de Uso</a></li>
+                        <li><a href="#">Política de Privacidade</a></li>
+                        <li><a href="#">Cookies</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 TopCine Brasil. Sistema integrado com Google Sheets.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="config-temp.js"></script>
+    <script src="google-sheets.js"></script>
+    <script src="payment-handler.js"></script>
+    <script src="script.js"></script>
+
+    <script>
+        // FUNÇÃO GLOBAL PARA ABRIR MODAL
+        function openLogin() {
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.style.display = 'block';
+                // Focar no campo de email
+                const emailInput = modal.querySelector('input[type="email"]');
+                if (emailInput) {
+                    emailInput.focus();
+                }
+            }
+        }
+
+        // FUNÇÃO GLOBAL PARA FECHAR MODAL
+        function closeLogin() {
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Fechar modal clicando fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('loginModal');
+            if (event.target === modal) {
+                closeLogin();
+            }
+        }
+    </script>
+</body>
+</html>

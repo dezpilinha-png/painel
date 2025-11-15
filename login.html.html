@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TopBrasil - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 3rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo i {
+            font-size: 3rem;
+            color: #ff6b00;
+            margin-bottom: 1rem;
+        }
+
+        .logo h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff6b00, #ff8c00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo p {
+            color: #94a3b8;
+            margin-top: 0.5rem;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            z-index: 1;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 15px 15px 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #334155;
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #ff6b00;
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 0 3px rgba(255,107,0,0.3);
+        }
+
+        .input-group input::placeholder {
+            color: #64748b;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #ff6b00, #ff8c00);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255,107,0,0.4);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #ef4444;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+            display: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #334155;
+            border-top: 2px solid #ff6b00;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .version {
+            text-align: center;
+            margin-top: 2rem;
+            color: #64748b;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <i class="fas fa-satellite-dish"></i>
+            <h1>TopBrasil</h1>
+            <p>Sistema de Gestão de Serviços</p>
+        </div>
+
+        <div class="error-message" id="errorMessage">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="errorText"></span>
+        </div>
+
+        <form id="loginForm">
+            <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="username" placeholder="Usuário" required>
+            </div>
+
+            <div class="input-group">
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Senha" required>
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i>
+                Entrar no Sistema
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="loading-spinner"></div>
+            <p style="margin-top: 0.5rem; color: #94a3b8;">Verificando credenciais...</p>
+        </div>
+
+        <div class="version">
+            v1.0 • TopBrasil System
+        </div>
+    </div>
+
+    <script>
+        class LoginSystem {
+            constructor() {
+                this.users = {
+                    'admin': 'topbrasil2024',
+                    'suporte': 'suporte123',
+                    'operador': 'operador456'
+                };
+                this.init();
+            }
+
+            init() {
+                document.getElementById('loginForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleLogin();
+                });
+
+                // Verificar se já está logado
+                if (this.isLoggedIn()) {
+                    window.location.href = 'dashboard-topbrasil.html';
+                }
+            }
+
+            handleLogin() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const errorMessage = document.getElementById('errorMessage');
+                const errorText = document.getElementById('errorText');
+                const loginBtn = document.getElementById('loginBtn');
+                const loading = document.getElementById('loading');
+
+                // Mostrar loading
+                loginBtn.disabled = true;
+                loading.style.display = 'block';
+                errorMessage.style.display = 'none';
+
+                // Simular verificação (em produção, seria com API)
+                setTimeout(() => {
+                    if (this.authenticate(username, password)) {
+                        this.setLoggedIn(username);
+                        window.location.href = 'dashboard-topbrasil.html';
+                    } else {
+                        errorText.textContent = 'Usuário ou senha incorretos';
+                        errorMessage.style.display = 'block';
+                        loginBtn.disabled = false;
+                        loading.style.display = 'none';
+                    }
+                }, 1500);
+            }
+
+            authenticate(username, password) {
+                return this.users[username] === password;
+            }
+
+            setLoggedIn(username) {
+                localStorage.setItem('topbrasil_logged_in', 'true');
+                localStorage.setItem('topbrasil_username', username);
+                localStorage.setItem('topbrasil_login_time', new Date().toISOString());
+            }
+
+            isLoggedIn() {
+                return localStorage.getItem('topbrasil_logged_in') === 'true';
+            }
+        }
+
+        // Inicializar sistema de login
+        new LoginSystem();
+    </script>
+</body>
+</html>
